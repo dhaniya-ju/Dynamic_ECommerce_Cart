@@ -1,0 +1,13 @@
+{
+  "name": "dynamic-ecommerce-cart",
+  "version": "1.0.0",
+  "description": "Web Essentials Assignment 1 - Dynamic E-Commerce Cart & Order Checkout System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
