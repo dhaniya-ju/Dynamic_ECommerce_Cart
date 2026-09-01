@@ -6,7 +6,10 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
+// Serve frontend files
 app.use(express.static(path.join(__dirname, "public")));
+
+// ================= PRODUCTS =================
 
 const products = [
   {
@@ -53,11 +56,16 @@ const products = [
   }
 ];
 
+// ================= API =================
+
 app.get("/api/products", function (req, res) {
   res.json(products);
 });
 
+// ================= ORDERS =================
+
 app.post("/api/orders", function (req, res) {
+
   const customer = req.body.customer;
   const items = req.body.items;
   const totals = req.body.totals;
@@ -82,12 +90,14 @@ app.post("/api/orders", function (req, res) {
   }
 
   const validItems = items.every(function (item) {
+
     return (
       products.some(function (product) {
         return product.id === item.id;
       }) &&
       Number(item.quantity) > 0
     );
+
   });
 
   if (!validItems) {
@@ -110,14 +120,23 @@ app.post("/api/orders", function (req, res) {
   });
 });
 
-app.get("/*splat", function (req, res) {
+// ================= FRONTEND =================
+
+// Express 5 requires this syntax to match "/"
+app.get("/{*splat}", function (req, res) {
+
   res.sendFile(
     path.join(__dirname, "public", "index.html")
   );
+
 });
 
-app.listen(PORT, function () {
+// ================= SERVER =================
+
+app.listen(PORT, "0.0.0.0", function () {
+
   console.log(
-    "E-Commerce Cart running at http://localhost:" + PORT
+    "E-Commerce Cart running on port " + PORT
   );
+
 });
