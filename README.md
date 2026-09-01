@@ -34,7 +34,7 @@ npm start
 
 Then open:
 
-http://localhost:3000
+https://shopease-nxz7.onrender.com
 
 ### Client-side flow
 Browser -> JavaScript -> Cart -> Checkout -> POST /api/orders
