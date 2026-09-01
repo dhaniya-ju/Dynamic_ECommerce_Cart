@@ -6,137 +6,82 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// Serve frontend files
-app.use(express.static(path.join(__dirname, "public")));
-
-// ================= PRODUCTS =================
+// Serve frontend files from the root folder
+app.use(express.static(__dirname));
 
 const products = [
   {
     id: 1,
     name: "Wireless Headphones",
     price: 1499,
-    image: "/images/headphones.jpg",
+    icon: "🎧",
     category: "Audio"
   },
   {
     id: 2,
-    name: "Smart Watch",
-    price: 2299,
-    image: "/images/smartwatch.jpg",
-    category: "Wearables"
+    name: "Mechanical Keyboard",
+    price: 2499,
+    icon: "⌨️",
+    category: "Accessories"
   },
   {
     id: 3,
-    name: "Mechanical Keyboard",
-    price: 3199,
-    image: "/images/keyboard.jpg",
+    name: "Wireless Mouse",
+    price: 899,
+    icon: "🖱️",
     category: "Accessories"
   },
   {
     id: 4,
-    name: "Gaming Mouse",
-    price: 999,
-    image: "/images/mouse.jpg",
-    category: "Accessories"
+    name: "Smart Watch",
+    price: 2999,
+    icon: "⌚",
+    category: "Wearables"
   },
   {
     id: 5,
-    name: "Portable Speaker",
-    price: 1799,
-    image: "/images/speaker.jpg",
+    name: "Bluetooth Speaker",
+    price: 1999,
+    icon: "🔊",
     category: "Audio"
   },
   {
     id: 6,
-    name: "USB-C Hub",
-    price: 1299,
-    image: "/images/usb-hub.jpg",
+    name: "USB Hub",
+    price: 699,
+    icon: "🔌",
     category: "Accessories"
   }
 ];
 
-// ================= API =================
-
-app.get("/api/products", function (req, res) {
+// Get all products
+app.get("/api/products", (req, res) => {
   res.json(products);
 });
 
-// ================= ORDERS =================
+// Get a single product
+app.get("/api/products/:id", (req, res) => {
+  const product = products.find(
+    p => p.id === Number(req.params.id)
+  );
 
-app.post("/api/orders", function (req, res) {
-
-  const customer = req.body.customer;
-  const items = req.body.items;
-  const totals = req.body.totals;
-
-  if (
-    !customer ||
-    !customer.name ||
-    !customer.email ||
-    !customer.address
-  ) {
-    return res.status(400).json({
-      success: false,
-      message: "Please provide all required customer details."
+  if (!product) {
+    return res.status(404).json({
+      message: "Product not found"
     });
   }
 
-  if (!Array.isArray(items) || items.length === 0) {
-    return res.status(400).json({
-      success: false,
-      message: "Your cart is empty."
-    });
-  }
-
-  const validItems = items.every(function (item) {
-
-    return (
-      products.some(function (product) {
-        return product.id === item.id;
-      }) &&
-      Number(item.quantity) > 0
-    );
-
-  });
-
-  if (!validItems) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid product or quantity."
-    });
-  }
-
-  const orderId =
-    "ORD-" + Date.now().toString().slice(-8);
-
-  res.json({
-    success: true,
-    message: "Order placed successfully!",
-    orderId: orderId,
-    customer: customer.name,
-    total: Number(totals.total).toFixed(2),
-    estimatedDelivery: "3-5 working days"
-  });
+  res.json(product);
 });
 
-// ================= FRONTEND =================
-
-// Express 5 requires this syntax to match "/"
-app.get("/{*splat}", function (req, res) {
-
+// Handle frontend routes
+app.get("/{*splat}", (req, res) => {
   res.sendFile(
-    path.join(__dirname, "public", "index.html")
+    path.join(__dirname, "index.html")
   );
-
 });
 
-// ================= SERVER =================
-
-app.listen(PORT, "0.0.0.0", function () {
-
-  console.log(
-    "E-Commerce Cart running on port " + PORT
-  );
-
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
